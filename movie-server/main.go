@@ -29,10 +29,25 @@ func getMovies(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(movies)
 }
 
-//get
-func getMovie(w http.ResponseWriter, r *http.Request) {}
+// get single movie
+func getMovie(w http.ResponseWriter, r *http.Request) {
+	vars:= mux.Vars(r)
+	fmt.Printf(vars["id"])
+	id := vars["id"]
+	
+
+	for _, movie := range movies {
+        if movie.ID == id {
+            w.Header().Set("Content-Type", "application/json")
+            json.NewEncoder(w).Encode(movie)
+            return
+        }
+    }
+
+}
 func createMovie(w http.ResponseWriter, r *http.Request){}
 func updateMovie(w http.ResponseWriter, r *http.Request){}
+// delete
 func deleteMovie(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	params:= mux.Vars(r)
@@ -59,7 +74,7 @@ func main (){
 	r.HandleFunc("/movies/{id}", updateMovie).Methods("PUT")
 	r.HandleFunc("/movies/{id}", deleteMovie).Methods("DELETE")
 
-	fmt.Printf("Server is running on port 8080")
+	fmt.Printf("Server is running on port 8080\n")
 	if err:= http.ListenAndServe(":8080", r); err!=nil {
 		log.Fatal(err)
 	}
